@@ -1084,7 +1084,17 @@ void handleLanKeypress() {
 int gameLoop() {
   // int posx = 0, posy = SCREEN_HEIGHT / 2;
   // Game loop
+  int lastTicks = 0;
   for (bool quit = 0; !quit;) {
+    // Get ticks
+    int newTicks = SDL_GetTicks();
+
+    // Get ticks from last frame and compare with framerate
+    if (newTicks - lastTicks < 17)
+    {
+        SDL_Delay(17 - (newTicks - lastTicks));
+        continue;
+    }
     quit = handleLocalKeypress();
     if (quit) sendGameOverPacket(3);
     if (lanClientSocket != NULL) handleLanKeypress();
@@ -1139,6 +1149,8 @@ int gameLoop() {
         setTerm(STAGE_CLEAR);
       }
     }
+    // Update the ticks
+    lastTicks = newTicks;
   }
   return status;
 }
