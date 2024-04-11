@@ -212,7 +212,7 @@ void mainUi() {
   int startY = SCREEN_HEIGHT / 2 - 70;
   int startX = SCREEN_WIDTH / 5 + 32;
   createAndPushAnimation(&animationsList[RENDER_LIST_UI_ID],
-                         &textures[RES_TITLE], NULL, LOOP_INFI, 80,
+                         &textures[RES_TITLE], NULL, LOOP_INFI, 160,
                          SCREEN_WIDTH / 2, 280, SDL_FLIP_NONE, 0, AT_CENTER);
   createAndPushAnimation(&animationsList[RENDER_LIST_SPRITE_ID],
                          &textures[RES_KNIGHT_M], NULL, LOOP_INFI,
