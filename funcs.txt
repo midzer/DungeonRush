@@ -1,0 +1,13 @@
+[
+    "main",
+    "mainUi",
+    "rankListUi",
+    "blackout",
+    "startGame",
+    "chooseOptions",
+    "SDL_Delay",
+    "SDL_RenderPresent",
+    "GLES2_RenderPresent",
+    "Emscripten_GLES_SwapWindow",
+    "dynCall_v"
+]
