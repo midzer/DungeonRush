@@ -38,12 +38,10 @@ LinkList animationsList[ANIMATION_LINK_LIST_NUM];
 Animation* countDownBar;
 void blacken(int duration) {
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-  SDL_Rect rect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
   SDL_SetRenderDrawColor(renderer, RENDER_BG_COLOR, 85);
-  for (int i = 0; i < duration; i++) {
-    SDL_RenderFillRect(renderer, &rect);
-    SDL_RenderPresent(renderer);
-  }
+  SDL_RenderFillRect(renderer, NULL);
+  SDL_Delay(duration);
+  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 }
 void blackout() { blacken(RENDER_BLACKOUT_DURATION); }
 void dim() { blacken(RENDER_DIM_DURATION); }
@@ -87,7 +85,6 @@ void clearRenderer() {
   for (int i = 0; i < ANIMATION_LINK_LIST_NUM; i++) {
     destroyAnimationsByLinkList(&animationsList[i]);
   }
-  SDL_RenderClear(renderer);
 }
 void renderCstrCenteredText(const char* str, int x, int y, double scale) {
   Text* text = malloc(sizeof(Text));
@@ -346,6 +343,7 @@ void renderCenteredTextBackground(Text* text, int x, int y, double scale) {
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 200);
   SDL_RenderFillRect(renderer, &dst);
+  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 }
 void renderId() {
   int powerful = getPowerfulPlayer();
@@ -393,9 +391,6 @@ void renderInfo() {
   }
 }
 void render() {
-  SDL_SetRenderDrawColor(renderer, 25, 17, 23, 255);
-  SDL_RenderClear(renderer);
-
   for (int i = 0; i < ANIMATION_LINK_LIST_NUM; i++) {
     updateAnimationLinkList(&animationsList[i]);
     if (i == RENDER_LIST_SPRITE_ID)
@@ -407,8 +402,6 @@ void render() {
   renderCountDown();
   renderInfo();
   renderId();
-  // Update Screen
-  SDL_RenderPresent(renderer);
   renderFrames++;
 }
 void renderUi() {

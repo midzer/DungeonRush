@@ -498,6 +498,18 @@ void initGame(int localPlayers, int remotePlayers, bool localFirst) {
   bullets = createLinkList();
 }
 
+void waitForKey() {
+  SDL_Event e;
+  for (;;) {
+    while (SDL_PollEvent(&e)) {
+      if (e.type == SDL_QUIT || e.type == SDL_KEYDOWN) {
+        return;
+      }
+    }
+    SDL_Delay(1);
+  }
+}
+
 void destroyGame(int status) {
   while (spritesCount) {
     destroySnake(spriteSnake[--spritesCount]);
@@ -524,9 +536,7 @@ void destroyGame(int status) {
   Text* text = createText(msg, WHITE);
   renderCenteredText(text, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 2);
   destroyText(text);
-  SDL_RenderPresent(renderer);
-  sleep(RENDER_GAMEOVER_DURATION);
-  clearRenderer();
+  waitForKey();
 }
 
 void destroySnake(Snake* snake) {
@@ -982,18 +992,9 @@ void pauseGame() {
   const char msg[] = "Paused";
   extern SDL_Color WHITE;
   Text* text = createText(msg, WHITE);
-  renderCenteredText(text, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1);
-  SDL_RenderPresent(renderer);
+  renderCenteredText(text, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 2);
   destroyText(text);
-  SDL_Event e;
-  for (bool quit = 0; !quit;) {
-    while (SDL_PollEvent(&e)) {
-      if (e.type == SDL_QUIT || e.type == SDL_KEYDOWN) {
-        quit = true;
-        break;
-      }
-    }
-  }
+  waitForKey();
   resumeSound();
   playAudio(AUDIO_BUTTON1);
 }
@@ -1043,7 +1044,7 @@ bool handleLocalKeypress() {
       setTerm(GAME_OVER);
     } else if (e.type == SDL_KEYDOWN) {
       int keyValue = e.key.keysym.sym;
-      if (keyValue == SDLK_ESCAPE) pauseGame();
+      if (keyValue == SDLK_ESCAPE || keyValue == SDLK_p) pauseGame();
       for (int id = 0; id <= 1 && id < playersCount; id++) {
         Snake* player = spriteSnake[id];
         if (player->playerType == LOCAL) {
@@ -1085,6 +1086,7 @@ int gameLoop() {
   // int posx = 0, posy = SCREEN_HEIGHT / 2;
   // Game loop
   int lastTicks = 0;
+  bool first = true;
   for (bool quit = 0; !quit;) {
     // Get ticks
     int newTicks = SDL_GetTicks();
@@ -1095,9 +1097,9 @@ int gameLoop() {
         SDL_Delay(17 - (newTicks - lastTicks));
         continue;
     }
-    quit = handleLocalKeypress();
-    if (quit) sendGameOverPacket(3);
-    if (lanClientSocket != NULL) handleLanKeypress();
+
+    SDL_SetRenderDrawColor(renderer, RENDER_BG_COLOR, 255);
+    SDL_RenderClear(renderer);
 
     updateMap();
 
@@ -1122,6 +1124,20 @@ int gameLoop() {
     }
     makeCross();
     render();
+    if (first) {
+      first = false;
+      blackout();
+      extern SDL_Color WHITE;
+      Text* text = createText("Press any key", WHITE);
+      renderCenteredText(text, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 2);
+      destroyText(text);
+      waitForKey();
+    }
+    
+    quit = handleLocalKeypress();
+    if (quit) sendGameOverPacket(3);
+    if (lanClientSocket != NULL) handleLanKeypress();
+
     updateBuffDuration();
     for (int i = playersCount; i < spritesCount; i++) {
       if (!spriteSnake[i]->num) {
@@ -1149,6 +1165,8 @@ int gameLoop() {
         setTerm(STAGE_CLEAR);
       }
     }
+    // Update Screen
+    SDL_RenderPresent(renderer);
     // Update the ticks
     lastTicks = newTicks;
   }
