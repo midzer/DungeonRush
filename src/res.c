@@ -100,8 +100,8 @@ bool init() {
   } else {
     // Create window
     window = SDL_CreateWindow("Dungeon Rush "VERSION_STRING, SDL_WINDOWPOS_UNDEFINED,
-                              SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
-                              SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+                              SDL_WINDOWPOS_UNDEFINED, 720,
+                              480, SDL_WINDOW_ALLOW_HIGHDPI);
     if (window == NULL) {
       printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
       success = false;
@@ -121,6 +121,7 @@ bool init() {
         success = false;
       } else {
         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
         // Initialize PNG loading
         int imgFlags = IMG_INIT_PNG;
         if (!(IMG_Init(imgFlags) & imgFlags)) {
@@ -150,27 +151,14 @@ bool init() {
   return success;
 }
 SDL_Texture* loadSDLTexture(const char* path) {
-  // The final texture
-  SDL_Texture* newTexture = NULL;
-
-  // Load image at specified path
-  SDL_Surface* loadedSurface = IMG_Load(path);
-  if (loadedSurface == NULL) {
-    printf("Unable to load image %s! SDL_image Error: %s\n", path,
-           IMG_GetError());
-  } else {
-    // Create texture from surface pixels
-    newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-    if (newTexture == NULL) {
-      printf("Unable to create texture from %s! SDL Error: %s\n", path,
-             SDL_GetError());
-    }
-
-    // Get rid of old loaded surface
-    SDL_FreeSurface(loadedSurface);
+  // Load texture at specified path
+  SDL_Texture* texture = IMG_LoadTexture(renderer, path);
+  if (texture == NULL) {
+    printf("Unable to create texture from %s! SDL Error: %s\n", path,
+            SDL_GetError());
   }
 
-  return newTexture;
+  return texture;
 }
 bool loadTextset() {
   bool success = true;
