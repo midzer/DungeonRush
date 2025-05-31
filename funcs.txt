@@ -7,6 +7,7 @@
     "chooseOptions",
     "SDL_Delay",
     "SDL_RenderPresent",
+    "SDL_WaitEventTimeout",
     "GLES2_RenderPresent",
     "Emscripten_GLES_SwapWindow",
     "dynCall_v"
