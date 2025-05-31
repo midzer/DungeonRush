@@ -9,7 +9,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
 # Set output path
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -flto -fno-rtti -fno-exceptions -sUSE_SDL=2 -sUSE_SDL_IMAGE=2 -sUSE_SDL_NET=2 -sUSE_SDL_MIXER=2 -sUSE_SDL_TTF=2")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g0 -O3 -flto -fno-rtti -fno-exceptions -sUSE_SDL=2 -sUSE_SDL_IMAGE=2 -sUSE_SDL_NET=2 -sUSE_SDL_MIXER=2 -sUSE_SDL_TTF=2")
 
 # Find SDL2
 find_package(SDL2)
