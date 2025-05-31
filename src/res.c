@@ -101,15 +101,14 @@ bool init() {
     // Create window
     window = SDL_CreateWindow("Dungeon Rush "VERSION_STRING, SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED, 720,
-                              480, SDL_WINDOW_ALLOW_HIGHDPI);
+                              480, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     if (window == NULL) {
       printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
       success = false;
     } else {
       // Software Render
 #ifndef SOFTWARE_ACC
-      renderer = SDL_CreateRenderer(
-          window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+      renderer = SDL_CreateRenderer(window, -1, 0);
 #endif
 #ifdef SOFTWARE_ACC
       printf("define software acc\n");
