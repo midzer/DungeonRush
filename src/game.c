@@ -500,13 +500,10 @@ void initGame(int localPlayers, int remotePlayers, bool localFirst) {
 
 void waitForKey() {
   SDL_Event e;
-  for (;;) {
-    while (SDL_PollEvent(&e)) {
-      if (e.type == SDL_QUIT || e.type == SDL_KEYDOWN) {
-        return;
-      }
+  while (SDL_WaitEvent(&e)) {
+    if (e.type == SDL_QUIT || e.type == SDL_KEYDOWN) {
+      return;
     }
-    SDL_Delay(1);
   }
 }
 
@@ -1085,18 +1082,9 @@ void handleLanKeypress() {
 int gameLoop() {
   // int posx = 0, posy = SCREEN_HEIGHT / 2;
   // Game loop
-  int lastTicks = 0;
   bool first = true;
   for (bool quit = 0; !quit;) {
-    // Get ticks
-    int newTicks = SDL_GetTicks();
-
-    // Get ticks from last frame and compare with framerate
-    if (newTicks - lastTicks < 17)
-    {
-        SDL_Delay(17 - (newTicks - lastTicks));
-        continue;
-    }
+    Uint32 gameCycleTicks = SDL_GetTicks();
 
     SDL_SetRenderDrawColor(renderer, RENDER_BG_COLOR, 255);
     SDL_RenderClear(renderer);
@@ -1167,8 +1155,12 @@ int gameLoop() {
     }
     // Update Screen
     SDL_RenderPresent(renderer);
-    // Update the ticks
-    lastTicks = newTicks;
+
+    // Limit to framerate
+    gameCycleTicks = SDL_GetTicks() - gameCycleTicks;
+    if (gameCycleTicks < 17) {
+      SDL_Delay(17 - gameCycleTicks);
+    }
   }
   return status;
 }
