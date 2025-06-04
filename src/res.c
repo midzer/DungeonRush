@@ -100,8 +100,8 @@ bool init() {
   } else {
     // Create window
     window = SDL_CreateWindow("Dungeon Rush "VERSION_STRING, SDL_WINDOWPOS_UNDEFINED,
-                              SDL_WINDOWPOS_UNDEFINED, 720,
-                              480, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+                              SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
+                              SCREEN_HEIGHT, 0);
     if (window == NULL) {
       printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
       success = false;
