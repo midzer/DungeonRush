@@ -1082,12 +1082,12 @@ void handleLanKeypress() {
 int gameLoop() {
   // int posx = 0, posy = SCREEN_HEIGHT / 2;
   // Game loop
-  bool first = true;
-  for (bool quit = 0; !quit;) {
-    Uint32 gameCycleTicks = SDL_GetTicks();
-
-    SDL_SetRenderDrawColor(renderer, RENDER_BG_COLOR, 255);
-    SDL_RenderClear(renderer);
+  bool quit = false;
+  bool firstFrame = true;
+  const int FRAME_TIME_MS = 16; // 60 FPS
+  Uint32 lastFrame = SDL_GetTicks();
+  while (!quit) {
+    Uint32 now = SDL_GetTicks();
 
     updateMap();
 
@@ -1111,9 +1111,11 @@ int gameLoop() {
         }
     }
     makeCross();
+    SDL_SetRenderDrawColor(renderer, RENDER_BG_COLOR, 255);
+    SDL_RenderClear(renderer);
     render();
-    if (first) {
-      first = false;
+    if (firstFrame) {
+      firstFrame = false;
       blackout();
       extern SDL_Color WHITE;
       Text* text = createText("Press any key", WHITE);
@@ -1156,11 +1158,18 @@ int gameLoop() {
     // Update Screen
     SDL_RenderPresent(renderer);
 
-    // Limit to framerate
-    gameCycleTicks = SDL_GetTicks() - gameCycleTicks;
-    if (gameCycleTicks < 17) {
-      SDL_Delay(17 - gameCycleTicks);
-    }
+    // Calculate how much time to wait until the next frame
+    int delay = FRAME_TIME_MS - (now - lastFrame);
+    if (delay > 0)
+      SDL_Delay(delay);
+
+    // Advance lastFrame by the fixed frame time
+    lastFrame += FRAME_TIME_MS;
+
+    // If the game lags behind, resync
+    Uint32 endTicks = SDL_GetTicks();
+    if ((int)(endTicks - lastFrame) > FRAME_TIME_MS * 4)
+      lastFrame = endTicks;
   }
   return status;
 }
