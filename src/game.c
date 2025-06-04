@@ -77,7 +77,7 @@ void setLevel(int level) {
   GAME_MONSTERS_GEN_FACTOR = 1 + level * 0.5 + stage * level * 0.05;
   GAME_MONSTERS_WEAPON_BUFF_ADJUST = 1 + level * 0.8 + stage * level * 0.02;
   AI_LOCK_LIMIT = MAX(1, 7 - level * 2 - stage / 2);
-  GAME_WIN_NUM = 10 + level * 5 + stage * 3;
+  GAME_WIN_NUM = 8 + level * 5 + stage * 2;
   if (level == 0) {
   } else if (level == 1) {
     GAME_DROPOUT_WEAPONS = 0.98;
