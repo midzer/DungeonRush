@@ -84,6 +84,8 @@ int chooseOptions(int optionsNum, Text** options) {
     // Update Screen
     SDL_RenderPresent(renderer);
     renderFrames++;
+
+    SDL_Delay(16);
   }
   playAudio(AUDIO_BUTTON1);
   destroySnake(player);
